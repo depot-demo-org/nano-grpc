@@ -1,7 +1,8 @@
 FROM node:24
 
-RUN GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+ARG TARGETARCH
+RUN GRPC_HEALTH_PROBE_VERSION=v0.4.51 && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
     chmod +x /bin/grpc_health_probe
 
 WORKDIR /app
@@ -12,8 +13,7 @@ COPY proto proto
 COPY src src
 COPY index.js .
 
-RUN adduser -D -u 1001 -G root nonroot
-USER 1001
+USER node
 
 EXPOSE 50051
 CMD ["node", "index.js"]
